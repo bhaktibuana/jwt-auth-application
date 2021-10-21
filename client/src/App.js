@@ -1,20 +1,19 @@
 import React from 'react';
 import './App.css';
 import Form from './Form';
-import { BrowserRouter as Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
-    <Switch>
-      <Route path='/'>
-        <p>asdasd</p>
-        {/* <Form /> */}
-      </Route>
-      <Route path='/signup'>
-        <SignUpPage />
-      </Route>
-    </Switch>
+    <>
+      <Router>
+        <Switch>
+          <Route path='/' component={Form} exact />
+          <Route path='/signup' component={SignUpPage} exact />
+        </Switch>
+      </Router>
+    </>
   );
 }
 
