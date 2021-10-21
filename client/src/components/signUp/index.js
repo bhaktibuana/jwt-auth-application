@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormValidation from './FormValidation';
+import Crypto from 'crypto';
+import Axios from 'axios';
 import {
   Button,
   Form,
@@ -11,10 +13,15 @@ import {
   FormInputs,
   FormLabel,
   Input,
-  SpanSignin
+  SpanSignin,
+  SuccessH1,
+  SuccessImg
 } from './SignInElements';
 
-const SignUp = () => {
+const SignUp = ({
+  apiCheckUserEmail,
+  apiInsertUser
+}) => {
 
   const [inputValue, setInputValue] = useState({
     name: '',
@@ -25,6 +32,33 @@ const SignUp = () => {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkEmail, setCheckEmail] = useState([]);
+  const [formSuccess, setFormSuccess] = useState(false);
+
+  useEffect(() => {
+    if (inputValue.email !== "") {
+      Axios.get(apiCheckUserEmail + `/${inputValue.email}`).then((response) => {
+        // console.log(response.data.length);
+        setCheckEmail(response.data.length);
+      });
+    }
+
+    if (isSubmitting === true) {
+      if (!errors.stats && checkEmail === 1) {
+        setIsSubmitting(false);
+        errors.email = "Email is already taken";
+      } else if (!errors.stats && checkEmail === 0) {
+        const passwordHash = Crypto.createHash('sha256').update(inputValue.password).digest('hex');
+        Axios.post(apiInsertUser, {
+          usersName: inputValue.name,
+          usersEmail: inputValue.email,
+          usersPassword: passwordHash
+        });
+        setFormSuccess(true);
+        setIsSubmitting(false);
+      }
+    }
+  });
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -38,76 +72,83 @@ const SignUp = () => {
     e.preventDefault();
     setErrors(FormValidation(inputValue));
     setIsSubmitting(true);
-    console.log(isSubmitting);
   };
 
   return (
     <>
       <FormContainer>
         <FormContentLeft>
-          <FormImg src={require('../../image/img-2.svg').default} alt='spaceship' />
+          <FormImg src={require('../../image/img-2.svg').default} />
         </FormContentLeft>
 
-        <FormContentRight>
-          <Form onSubmit={handleSubmit} noValidate>
-            <FormH1>
-              Create your account for free!
-            </FormH1>
+        {!formSuccess ? (
+          <FormContentRight>
+            <Form onSubmit={handleSubmit} noValidate>
+              <FormH1>
+                Create your account for free!
+              </FormH1>
 
-            <FormInputs>
-              <FormLabel>Name</FormLabel>
-              <Input
-                type='text'
-                name='name'
-                placeholder='Enter your full name'
-                value={inputValue.name}
-                onChange={handleChange}
-              />
-              {errors.name && <p>{errors.name}</p>}
-            </FormInputs>
+              <FormInputs>
+                <FormLabel>Name</FormLabel>
+                <Input
+                  type='text'
+                  name='name'
+                  placeholder='Enter your full name'
+                  value={inputValue.name}
+                  onChange={handleChange}
+                />
+                {errors.name && <p>{errors.name}</p>}
+              </FormInputs>
 
-            <FormInputs>
-              <FormLabel>Email</FormLabel>
-              <Input
-                type='email'
-                name='email'
-                placeholder='Enter your email'
-                value={inputValue.email}
-                onChange={handleChange}
-              />
-              {errors.email && <p>{errors.email}</p>}
-            </FormInputs>
+              <FormInputs>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  type='email'
+                  name='email'
+                  placeholder='Enter your email'
+                  value={inputValue.email}
+                  onChange={handleChange}
+                />
+                {errors.email && <p>{errors.email}</p>}
+              </FormInputs>
 
-            <FormInputs>
-              <FormLabel>Password</FormLabel>
-              <Input
-                type='password'
-                name='password'
-                placeholder='Enter your password'
-                value={inputValue.password}
-                onChange={handleChange}
-              />
-              {errors.password && <p>{errors.password}</p>}
-            </FormInputs>
+              <FormInputs>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type='password'
+                  name='password'
+                  placeholder='Enter your password'
+                  value={inputValue.password}
+                  onChange={handleChange}
+                />
+                {errors.password && <p>{errors.password}</p>}
+              </FormInputs>
 
-            <FormInputs>
-              <FormLabel>Confirm Password</FormLabel>
-              <Input
-                type='password'
-                name='passwordConf'
-                placeholder='Confirm your password'
-                value={inputValue.passwordConf}
-                onChange={handleChange}
-              />
-              {errors.passwordConf && <p>{errors.passwordConf}</p>}
-            </FormInputs>
+              <FormInputs>
+                <FormLabel>Confirm Password</FormLabel>
+                <Input
+                  type='password'
+                  name='passwordConf'
+                  placeholder='Confirm your password'
+                  value={inputValue.passwordConf}
+                  onChange={handleChange}
+                />
+                {errors.passwordConf && <p>{errors.passwordConf}</p>}
+              </FormInputs>
 
-            <Button type='submit'>Sign Up</Button>
-            <SpanSignin>
-              Already have an account? <a href='/'>Login here</a>
-            </SpanSignin>
-          </Form>
-        </FormContentRight>
+              <Button type='submit'>Sign Up</Button>
+              <SpanSignin>
+                Already have an account? <a href='/'>Login here</a>
+              </SpanSignin>
+            </Form>
+          </FormContentRight>) : (
+
+          <FormContentRight>
+            <SuccessH1>Your registration is successful! <br /> Please check your email to verify your account.</SuccessH1>
+            <SuccessImg src={require('../../image/img-3.svg').default} />
+          </FormContentRight>
+        )}
+
       </FormContainer>
     </>
   );

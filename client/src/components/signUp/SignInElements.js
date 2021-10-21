@@ -133,3 +133,23 @@ export const SpanSignin = styled.span`
     font-weight: 600;
   }
 `;
+
+// styling success form
+
+export const SuccessH1 = styled.h1`
+  margin: 10px;
+  text-align: center;
+  font-size: 20px;
+  margin-top: 80px;
+  color: #fff;
+`;
+
+export const SuccessImg = styled.img`
+  margin: 30px 10px;
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
