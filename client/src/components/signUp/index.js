@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FormValidation from './FormValidation';
-import Crypto from 'crypto';
+import { Redirect } from 'react-router';
 import Axios from 'axios';
 import {
   Button,
@@ -34,6 +34,7 @@ const SignUp = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkEmail, setCheckEmail] = useState([]);
   const [formSuccess, setFormSuccess] = useState(false);
+  const [redirectLogin, setRedirectLogin] = useState(false);
 
   useEffect(() => {
     if (inputValue.email !== "") {
@@ -48,17 +49,35 @@ const SignUp = ({
         setIsSubmitting(false);
         errors.email = "Email is already taken";
       } else if (!errors.stats && checkEmail === 0) {
-        const passwordHash = Crypto.createHash('sha256').update(inputValue.password).digest('hex');
         Axios.post(apiInsertUser, {
           usersName: inputValue.name,
           usersEmail: inputValue.email,
-          usersPassword: passwordHash
+          usersPassword: inputValue.password
+        }).then((response) => {
+          // console.log(response);
+          if (response.status === 200) {
+            asyncRedirect(response.status).then((result) => {
+              result ? setRedirectLogin(true) : setRedirectLogin(false);
+            });
+            setFormSuccess(true);
+          } else {
+            setFormSuccess(false);
+          }
         });
-        setFormSuccess(true);
         setIsSubmitting(false);
       }
     }
   });
+
+  const asyncRedirect = e => {
+    return new Promise((resolve, reject) => {
+      if (e === 200) {
+        setTimeout(() => {
+          resolve(true);
+        }, 3000);
+      }
+    });
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -76,6 +95,7 @@ const SignUp = ({
 
   return (
     <>
+      {redirectLogin ? <Redirect to='/signin' /> : ''}
       <FormContainer>
         <FormContentLeft>
           <FormImg src={require('../../image/img-2.svg').default} />
