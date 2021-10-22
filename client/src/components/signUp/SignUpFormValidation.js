@@ -1,14 +1,14 @@
-export default function FormValidation(values) {
+export default function SignUpFormValidation(values) {
   let errors = {};
   let errorStats = false;
 
   if (!values.name.trim()) {
-    errors.name = "Name required";
+    errors.name = "Name is required";
     errorStats = true;
   }
 
   if (!values.email) {
-    errors.email = "Email required";
+    errors.email = "Email is required";
     errorStats = true;
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
     errors.email = "Email address is invalid";

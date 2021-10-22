@@ -89,6 +89,77 @@ app.get('/verify/:token', (req, res) => {
   });
 });
 
+// signin
+app.post('/api/signin', (req, res) => {
+  const usersEmail = req.body.usersEmail;
+  const usersPassword = crypto.createHash('sha256').update(req.body.usersPassword).digest('hex');
+
+  const sqlQuery = "SELECT * FROM users WHERE users_email = ?";
+  db.query(sqlQuery, usersEmail, (err, result) => {
+    if (result.length > 0) {
+      const usersId = result[0].users_id;
+      const usersName = result[0].users_name;
+      const usersEmail = result[0].users_email;
+      const usersRole = result[0].users_role;
+      const usersStatus = result[0].users_status;
+
+      if (result[0].users_password === usersPassword) {
+        if (usersStatus === "verified") {
+          const token = jwt.sign({
+            users_id: usersId,
+            users_name: usersName,
+            users_email: usersEmail,
+            users_role: usersRole
+          }, process.env.JWT_SECRET_KEY);
+
+          res.json({
+            auth: true,
+            token: token
+          });
+        } else {
+          res.json({
+            auth: false,
+            message: "Account not verified yet. Please check your email to verify!"
+          });
+        }
+      } else {
+        res.json({
+          auth: false,
+          message: "Wrong email/password combination."
+        });
+      }
+    } else {
+      res.json({
+        auth: false,
+        message: "Email address not registered."
+      });
+    }
+  });
+});
+
+const verifyJWT = (req, res, next) => {
+  const token = req.headers["x-access-token"];
+
+  if (!token) {
+    res.send("No token received.");
+  } else {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
+      if (err) {
+        res.json({ auth: false, message: "Failed to authenticate." });
+      } else {
+        res.send(decoded);
+        next();
+      }
+    });
+  }
+};
+
+// authenticate JWT after login
+
+app.get('/api/user_authentication', verifyJWT, (req, res) => {
+  res.send("You are authenticate!");
+});
+
 // test jwt
 app.post('/api/test_jwt', (req, res) => {
   const usersEmail = req.body.usersEmail;
@@ -114,28 +185,6 @@ app.post('/api/test_jwt', (req, res) => {
       res.json({ auth: true, token: token, result: result });
     }
   });
-});
-
-const verifyJWT = (req, res, next) => {
-  const token = req.headers["x-access-token"];
-
-  if (!token) {
-    res.send("No token received.");
-  } else {
-    jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decoded) => {
-      if (err) {
-        res.json({ auth: false, message: "Failed to authenticate." });
-      } else {
-        req.userId = decoded.id;
-        res.send(decoded);
-        next();
-      }
-    });
-  }
-};
-
-app.get('/api/user_auth', verifyJWT, (req, res) => {
-  res.send("You are authenticate!");
 });
 
 app.listen(3001, () => {

@@ -3,5 +3,7 @@ const apiBaseUrl = 'http://localhost:3001';
 
 export const apiUrl = {
   apiCheckUserEmail: `${apiBaseUrl}/api/get_available_users`,
-  apiInsertUser: `${apiBaseUrl}/api/signup`
+  apiSignUp: `${apiBaseUrl}/api/signup`,
+  apiSignIn: `${apiBaseUrl}/api/signin`,
+  apiUserAuth: `${apiBaseUrl}/api/user_authentication`
 };

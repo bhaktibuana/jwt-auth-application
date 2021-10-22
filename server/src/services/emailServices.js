@@ -36,7 +36,7 @@ const sendConfirmationEmail = async (object) => {
       to: `${object.usersEmail}`,
       subject: '[BSA] Please verify your account',
       text: '',
-      html: `<h3>Hey ${object.usersName}</h3></br><p>Please click link bellow to verify your account.</p></br><a href=${url}>${url}</a></br><p>*The verification link automatically expired or inactive for use when have used once.</p>`
+      html: `<h3>Hey ${object.usersName}</h3><br/><p>Please click link bellow to verify your account.</p><br/><a href=${url}>${url}</a><br/><p>*The verification link automatically expired or inactive for use when have used once.</p>`
     };
 
     const result = await transport.sendMail(mailOptions);

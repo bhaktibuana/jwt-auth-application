@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import FormValidation from './FormValidation';
+import SignUpFormValidation from './SignUpFormValidation';
 import { Redirect } from 'react-router';
 import Axios from 'axios';
 import {
@@ -20,7 +20,7 @@ import {
 
 const SignUp = ({
   apiCheckUserEmail,
-  apiInsertUser
+  apiSignUp
 }) => {
 
   const [inputValue, setInputValue] = useState({
@@ -29,15 +29,16 @@ const SignUp = ({
     password: '',
     passwordConf: ''
   });
-
+  
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkEmail, setCheckEmail] = useState([]);
   const [formSuccess, setFormSuccess] = useState(false);
   const [redirectLogin, setRedirectLogin] = useState(false);
+  const [redirectLandingPage, setRedirectLandingPage] = useState(false);
 
   useEffect(() => {
-    if (redirectLogin === false) {
+    if (redirectLandingPage === false) {
       if (inputValue.email !== "") {
         Axios.get(apiCheckUserEmail + `/${inputValue.email}`).then((response) => {
           // console.log(response.data.length);
@@ -50,7 +51,7 @@ const SignUp = ({
           setIsSubmitting(false);
           errors.email = "Email is already taken";
         } else if (!errors.stats && checkEmail === 0) {
-          Axios.post(apiInsertUser, {
+          Axios.post(apiSignUp, {
             usersName: inputValue.name,
             usersEmail: inputValue.email,
             usersPassword: inputValue.password
@@ -58,7 +59,7 @@ const SignUp = ({
             // console.log(response);
             if (response.status === 200) {
               asyncRedirect(response.status).then((result) => {
-                result ? setRedirectLogin(true) : setRedirectLogin(false);
+                result ? setRedirectLandingPage(true) : setRedirectLandingPage(false);
               });
               setFormSuccess(true);
             } else {
@@ -91,12 +92,17 @@ const SignUp = ({
 
   const handleSubmit = e => {
     e.preventDefault();
-    setErrors(FormValidation(inputValue));
+    setErrors(SignUpFormValidation(inputValue));
     setIsSubmitting(true);
   };
 
+  const redirectLoginHandler = () => {
+    setRedirectLogin(true);
+  }
+
   return (
     <>
+      {redirectLandingPage ? <Redirect to='/' /> : ''}
       {redirectLogin ? <Redirect to='/signin' /> : ''}
       <FormContainer>
         <FormContentLeft>
@@ -119,7 +125,7 @@ const SignUp = ({
                   value={inputValue.name}
                   onChange={handleChange}
                 />
-                {errors.name && <p>{errors.name}</p>}
+                {<p>{errors.name}</p>}
               </FormInputs>
 
               <FormInputs>
@@ -131,7 +137,7 @@ const SignUp = ({
                   value={inputValue.email}
                   onChange={handleChange}
                 />
-                {errors.email && <p>{errors.email}</p>}
+                {<p>{errors.email}</p>}
               </FormInputs>
 
               <FormInputs>
@@ -143,7 +149,7 @@ const SignUp = ({
                   value={inputValue.password}
                   onChange={handleChange}
                 />
-                {errors.password && <p>{errors.password}</p>}
+                {<p>{errors.password}</p>}
               </FormInputs>
 
               <FormInputs>
@@ -155,12 +161,12 @@ const SignUp = ({
                   value={inputValue.passwordConf}
                   onChange={handleChange}
                 />
-                {errors.passwordConf && <p>{errors.passwordConf}</p>}
+                {<p>{errors.passwordConf}</p>}
               </FormInputs>
 
               <Button type='submit'>Sign Up</Button>
               <SpanSignin>
-                Already have an account? <a href='/'>Login here</a>
+                Already have an account? <a onClick={redirectLoginHandler}>Login here</a>
               </SpanSignin>
             </Form>
           </FormContentRight>) : (
@@ -170,7 +176,6 @@ const SignUp = ({
             <SuccessImg src={require('../../image/img-3.svg').default} />
           </FormContentRight>
         )}
-
       </FormContainer>
     </>
   );

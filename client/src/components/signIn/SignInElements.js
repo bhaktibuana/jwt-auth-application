@@ -120,7 +120,7 @@ export const Button = styled.button`
   }
 `;
 
-export const SpanSignin = styled.span`
+export const SpanSignUp = styled.span`
   font-size: 0.8rem;
   margin-top: 10px;
   color: #fff;
@@ -135,22 +135,39 @@ export const SpanSignin = styled.span`
   }
 `;
 
-// styling success form
+export const Alert = styled.div`
+  background-color: #FF5252;
+  padding: 12px;
+  border-radius: 5px;
+  color: #fff;
+  display: block;
+  width: 100%;
+  font-size: 13px;
+
+  span {
+    margin-left: 15px;
+    color: #fff;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      color: #000;
+    }
+  }
+`;
 
 export const SuccessH1 = styled.h1`
   margin: 10px;
   text-align: center;
   font-size: 20px;
-  margin-top: 80px;
+  margin-top: 100px;
   color: #fff;
 `;
 
-export const SuccessImg = styled.img`
-  margin: 30px 10px;
-  width: 60%;
-  height: 60%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+export const SpinnerContainer = styled.div`
+  padding: 15px 45%;
 `;
