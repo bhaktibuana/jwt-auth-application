@@ -16,7 +16,7 @@ import {
   SpanSignin,
   SuccessH1,
   SuccessImg
-} from './SignInElements';
+} from './SignUpElements';
 
 const SignUp = ({
   apiCheckUserEmail,
@@ -37,34 +37,36 @@ const SignUp = ({
   const [redirectLogin, setRedirectLogin] = useState(false);
 
   useEffect(() => {
-    if (inputValue.email !== "") {
-      Axios.get(apiCheckUserEmail + `/${inputValue.email}`).then((response) => {
-        // console.log(response.data.length);
-        setCheckEmail(response.data.length);
-      });
-    }
-
-    if (isSubmitting === true) {
-      if (!errors.stats && checkEmail === 1) {
-        setIsSubmitting(false);
-        errors.email = "Email is already taken";
-      } else if (!errors.stats && checkEmail === 0) {
-        Axios.post(apiInsertUser, {
-          usersName: inputValue.name,
-          usersEmail: inputValue.email,
-          usersPassword: inputValue.password
-        }).then((response) => {
-          // console.log(response);
-          if (response.status === 200) {
-            asyncRedirect(response.status).then((result) => {
-              result ? setRedirectLogin(true) : setRedirectLogin(false);
-            });
-            setFormSuccess(true);
-          } else {
-            setFormSuccess(false);
-          }
+    if (redirectLogin === false) {
+      if (inputValue.email !== "") {
+        Axios.get(apiCheckUserEmail + `/${inputValue.email}`).then((response) => {
+          // console.log(response.data.length);
+          setCheckEmail(response.data.length);
         });
-        setIsSubmitting(false);
+      }
+
+      if (isSubmitting === true) {
+        if (!errors.stats && checkEmail === 1) {
+          setIsSubmitting(false);
+          errors.email = "Email is already taken";
+        } else if (!errors.stats && checkEmail === 0) {
+          Axios.post(apiInsertUser, {
+            usersName: inputValue.name,
+            usersEmail: inputValue.email,
+            usersPassword: inputValue.password
+          }).then((response) => {
+            // console.log(response);
+            if (response.status === 200) {
+              asyncRedirect(response.status).then((result) => {
+                result ? setRedirectLogin(true) : setRedirectLogin(false);
+              });
+              setFormSuccess(true);
+            } else {
+              setFormSuccess(false);
+            }
+          });
+          setIsSubmitting(false);
+        }
       }
     }
   });
