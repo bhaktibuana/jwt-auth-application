@@ -2,14 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mysql = require('mysql');
-
-const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'jwt_auth_db'
-});
+const { db } = require('./model/dbConnection');
 
 app.use(cors());
 app.use(express.json());
