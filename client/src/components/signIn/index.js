@@ -46,7 +46,7 @@ const SignIn = ({
       }).then((response) => {
         if (response.data.auth === true) {
           // console.log(response.data.token);
-          localStorage.setItem("token", response.data.token);
+          sessionStorage.setItem("token", response.data.token);
           setIsAuthenticating(true);
           setShowAlert(false);
           setIsSubmitting(false);
@@ -62,7 +62,6 @@ const SignIn = ({
     if (isAuthenticating === true) {
       userAuthentication().then((result) => {
         if (result) {
-          setRedirectDashboardPage(true);
           setIsAuthenticating(false);
         }
       });
@@ -96,17 +95,18 @@ const SignIn = ({
       setTimeout(() => {
         Axios.get(apiUserAuth, {
           headers: {
-            "x-access-token": localStorage.getItem("token")
+            "x-access-token": sessionStorage.getItem("token")
           }
         }).then((response) => {
           // console.log(response.data);
           sessionStorage.setItem("name", response.data.users_name);
           sessionStorage.setItem("email", response.data.users_email);
           sessionStorage.setItem("role", response.data.users_role);
+          setRedirectDashboardPage(true);
         });
         setIsAuthenticating(false);
         resolve(true);
-      }, 3000);
+      }, 1000);
     });
   };
 

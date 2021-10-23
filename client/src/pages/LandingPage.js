@@ -1,10 +1,12 @@
 import React from 'react';
+import UserProfile from '../components/userProfile';
+import { UserProfileLandingPage } from '../components/userProfile/UserProfileLandingPage';
 
 const LandingPage = () => {
   return (
-    <div>
-      This is landing page.
-    </div>
+    <>
+      <UserProfile {...UserProfileLandingPage} />
+    </>
   );
 };
 
