@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project was created by Bhakti Buana.\r Don't forget to support me with:\r - Subscribe my YouTube channel [Bhakti Buana](https://www.youtube.com/channel/UCV0a90P647_TGMeCfmQRfgA).\r - Follow my instagram [bhakti_buana](https://www.instagram.com/bhakti_buana).",
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
@@ -22,5 +22,6 @@
     "nodemailer": "^6.7.0",
     "nodemailer-sendgrid": "^1.0.3",
     "nodemon": "^2.0.13"
-  }
+  },
+  "devDependencies": {}
 }

@@ -22,5 +22,3 @@ The page will reload if you make edits.\
 You will also see any lint errors in the console.\
 \
 If you want to build the project from zero by yourself (not from this source code), you can follow my tutorial on my youtube channel [here](https://www.youtube.com/channel/UCV0a90P647_TGMeCfmQRfgA).
-
-
